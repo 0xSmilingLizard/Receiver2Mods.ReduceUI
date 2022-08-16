@@ -15,7 +15,7 @@ using UnityEngine.UI;
 namespace ReduceUI
 {
     [BepInProcess("Receiver2.exe")]
-    [BepInPlugin("SmilingLizard.plugins.ReduceUI", "ReduceUI", "1.0.0")]
+    [BepInPlugin("SmilingLizard.plugins.ReduceUI", "ReduceUI", "2.0.0")]
     public class ReduceUI : BaseUnityPlugin
     {
         private static ReduceUI instance;
@@ -149,9 +149,9 @@ namespace ReduceUI
 
                 this.tapeKey = this.Config.Bind(
                     "KeyBinding",
-                    "Show Tape Counter",
+                    "Show Progress",
                     KeyboardShortcut.Empty,
-                    "If the tape counter and/or queue are hidden, hold this key to temporarily show them."
+                    "If the tape counter, tape queue, and/or rank indicator are hidden, hold this key to temporarily show them."
                 );
 
                 this.Config.SettingChanged += OnSettingsChanged;
@@ -180,29 +180,41 @@ namespace ReduceUI
             return true;
         }
 
+        public void OverrideShowProgress(bool showOrHide)
+        {
+            // REVIEW: how sane are these first two ifs really?
+            if (this.show[Elem.TapeCounter].Value == false && this.elems[Elem.TapeCounter][0] is Behaviour counter)
+            {
+                counter.enabled = showOrHide;
+            }
+            if (this.show[Elem.TapeQueue].Value == false && this.elems[Elem.TapeQueue][0] is Behaviour queue)
+            {
+                queue.enabled = showOrHide;
+            }
+            if (this.show[Elem.Rank].Value == false)
+            {
+                int? rank = ReceiverCoreScript.Instance()
+                    ?.game_mode
+                    ?.GetComponent<RankingProgressionGameMode>()
+                    ?.progression_data
+                    ?.receiver_rank
+                ;
+                if (rank.HasValue && this.elems[Elem.Rank].Count > rank)
+                {
+                    this.elems[Elem.Rank][rank].enabled = showOrHide;
+                }
+            }
+        }
+
         public void Update()
         {
             if (Input.GetKeyDown(this.tapeKey.Value.MainKey) && OtherKeys())
             {
-                if (this.elems[Elem.TapeCounter][0] is Behaviour counter)
-                {
-                    counter.enabled = true;
-                }
-                if (this.elems[Elem.TapeQueue][0] is Behaviour queue)
-                {
-                    queue.enabled = true;
-                }
+                this.OverrideShowProgress(true);
             }
             else if (Input.GetKeyUp(this.tapeKey.Value.MainKey))
             {
-                if (!this.show[Elem.TapeCounter].Value && this.elems[Elem.TapeCounter][0] is Behaviour counter)
-                {
-                    counter.enabled = false;
-                }
-                if (!this.show[Elem.TapeQueue].Value && this.elems[Elem.TapeQueue][0] is Behaviour queue)
-                {
-                    queue.enabled = false;
-                }
+                this.OverrideShowProgress(false);
             }
         }
 
@@ -283,12 +295,13 @@ namespace ReduceUI
 
             if (!this.elems.ContainsKey(Elem.Rank))
             {
-                this.elems[Elem.Rank] = new List<Behaviour>(5);
+                this.elems[Elem.Rank] = new List<Behaviour>(6);
             }
             else
             {
                 this.elems[Elem.Rank].Clear();
             }
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Introduction").GetComponent<Image>());
             this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Beginner").GetComponent<Image>());
             this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleeper").GetComponent<Image>());
             this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleepwalker").GetComponent<Image>());
