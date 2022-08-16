@@ -99,7 +99,7 @@ namespace ReduceUI
                     ),
                     [Elem.TapeIcon] = this.Config.Bind(
                         group, 
-                        "Tape icon",
+                        "Tape Icon",
                         defaultValue,
                         "Toggles visibilty of the tape icon in the tape UI group."
                     ),
