@@ -21,26 +21,26 @@ namespace ReduceUI
         private static ReduceUI instance;
 
         private GameObject tutorial;
-        private Dictionary<E, List<Behaviour>> elems;
-        private Dictionary<E, ConfigEntry<bool>> show;
+        private Dictionary<Elem, List<Behaviour>> elems;
+        private Dictionary<Elem, ConfigEntry<bool>> show;
         private ConfigEntry<KeyboardShortcut> tapeKey;
 
-        private enum E
+        private enum Elem
         {
-            InvFrame,
-            InvNums,
-            InvEmpty,
+            InventoryFrame,
+            InventoryNumbers,
+            InventoryEmpty,
             Rank,
             Holster,
             TapeFrame,
             TapeIcon,
             TapeCounter,
             TapeQueue,
-            SubFrame,
-            SubWaveform,
-            Tut,
-            Msg,
-            H2H,
+            SubtitleFrame,
+            SubtitleWaveform,
+            GunHelp,
+            PopupMessages,
+            PopupHelp,
 
             Count
         }
@@ -51,32 +51,108 @@ namespace ReduceUI
             {
                 instance = this;
 
-                const bool def = true;
+                const bool defaultValue = true;
                 const string
                     inv = "Inventory",
                     group = "Bottom Right Group",
                     subs = "Subtitles",
-                    tut = "Tutorials";
+                    tut = "Tutorials"
+                ;
 
-                this.show = new Dictionary<E, ConfigEntry<bool>>
+                this.show = new Dictionary<Elem, ConfigEntry<bool>>
                 {
-                    [E.InvFrame] = this.Config.Bind(inv, "Frame", def, "Toggles visibilty of the frame around inventory items in the bottom left."),
-                    [E.InvNums] = this.Config.Bind(inv, "Numbers", def, "Toggles visibilty of the numbers in the inventory slots."),
-                    [E.InvEmpty] = this.Config.Bind(inv, "Empty Slots", def, "Toggles visibilty of the \"Empty\" indicator in empty inventory slots."),
-                    [E.Rank] = this.Config.Bind(group, "Rank Indicator", def, "Toggles visibilty of the rank indicator icon."),
-                    [E.Holster] = this.Config.Bind(group, "Holster Frame", def, "Toggles visibilty of the frame around the holster slot."),
-                    [E.TapeFrame] = this.Config.Bind(group, "Tape Frame", def, "Toggles visibilty of the frame around the tape UI group."),
-                    [E.TapeIcon] = this.Config.Bind(group, "Tape icon", def, "Toggles visibilty of the tape icon in the tape UI group."),
-                    [E.TapeCounter] = this.Config.Bind(group, "Tape Counter", def, "Toggles visibilty of the tape counter."),
-                    [E.TapeQueue] = this.Config.Bind(group, "Tape Queue", def, "Toggles visibilty of the number of queued tapes."),
-                    [E.SubFrame] = this.Config.Bind(subs, "Frame", def, "Toggles visibilty of the frame around subtitles."),
-                    [E.SubWaveform] = this.Config.Bind(subs, "Waveform Icon", def, "Toggles the visibility of the Waveform icon when playing tapes."),
-                    [E.Tut] = this.Config.Bind(tut, "Gun Help", def, "Toggles visibility of the gun help menu in the top right."),
-                    [E.Msg] = this.Config.Bind(tut, "Messages", def, "Toggles visibility of pop-up messages, like \"Collect 5 tapes\" or \"The voice of the Threat is taking control\"."),
-                    [E.H2H] = this.Config.Bind(tut, "In World Help", def, "Toggles visibility of in-world help messages, like \'Holster your gun to hack\'.")
+                    [Elem.InventoryFrame] = this.Config.Bind(
+                        inv, 
+                        "Frame",
+                        defaultValue,
+                        "Toggles visibilty of the frame around inventory items in the bottom left."
+                    ),
+                    [Elem.InventoryNumbers] = this.Config.Bind(
+                        inv, 
+                        "Numbers",
+                        defaultValue,
+                        "Toggles visibilty of the numbers in the inventory slots."
+                    ),
+                    [Elem.InventoryEmpty] = this.Config.Bind(
+                        inv, 
+                        "Empty Slots",
+                        defaultValue,
+                        "Toggles visibilty of the \"Empty\" indicator in empty inventory slots."
+                    ),
+                    [Elem.Rank] = this.Config.Bind(
+                        group, 
+                        "Rank Indicator",
+                        defaultValue,
+                        "Toggles visibilty of the rank indicator icon."
+                    ),
+                    [Elem.Holster] = this.Config.Bind(
+                        group, 
+                        "Holster Frame",
+                        defaultValue,
+                        "Toggles visibilty of the frame around the holster slot."
+                    ),
+                    [Elem.TapeFrame] = this.Config.Bind(
+                        group, 
+                        "Tape Frame",
+                        defaultValue,
+                        "Toggles visibilty of the frame around the tape UI group."
+                    ),
+                    [Elem.TapeIcon] = this.Config.Bind(
+                        group, 
+                        "Tape icon",
+                        defaultValue,
+                        "Toggles visibilty of the tape icon in the tape UI group."
+                    ),
+                    [Elem.TapeCounter] = this.Config.Bind(
+                        group, 
+                        "Tape Counter",
+                        defaultValue,
+                        "Toggles visibilty of the tape counter."
+                    ),
+                    [Elem.TapeQueue] = this.Config.Bind(
+                        group, 
+                        "Tape Queue",
+                        defaultValue,
+                        "Toggles visibilty of the number of queued tapes."
+                    ),
+                    [Elem.SubtitleFrame] = this.Config.Bind(
+                        subs, 
+                        "Frame",
+                        defaultValue,
+                        "Toggles visibilty of the frame around subtitles."
+                    ),
+                    [Elem.SubtitleWaveform] = this.Config.Bind(
+                        subs, 
+                        "Waveform Icon",
+                        defaultValue,
+                        "Toggles the visibility of the Waveform icon when playing tapes."
+                    ),
+                    [Elem.GunHelp] = this.Config.Bind(
+                        tut, 
+                        "Gun Help",
+                        defaultValue,
+                        "Toggles visibility of the gun help menu in the top right."
+                    ),
+                    [Elem.PopupMessages] = this.Config.Bind(
+                        tut, 
+                        "Messages",
+                        defaultValue,
+                        "Toggles visibility of pop-up messages, like \"Collect 5 tapes\" or \"The voice of the Threat is taking control\"."
+                    ),
+                    [Elem.PopupHelp] = this.Config.Bind(
+                        tut, 
+                        "In World Help",
+                        defaultValue,
+                        "Toggles visibility of in-world help messages, like \'Holster your gun to hack\'."
+                    )
                 };
 
-                this.tapeKey = this.Config.Bind("KeyBinding", "Show Tape Counter", KeyboardShortcut.Empty, "If the tape counter and/or queue are hidden, hold this key to temporarily show them.");
+                this.tapeKey = this.Config.Bind(
+                    "KeyBinding",
+                    "Show Tape Counter",
+                    KeyboardShortcut.Empty,
+                    "If the tape counter and/or queue are hidden, hold this key to temporarily show them."
+                );
 
                 this.Config.SettingChanged += OnSettingsChanged;
 
@@ -87,7 +163,9 @@ namespace ReduceUI
         private void OnSettingsChanged(object sender, SettingChangedEventArgs args)
         {
             if (Init())
+            {
                 Apply();
+            }
         }
 
         private bool OtherKeys()
@@ -95,7 +173,9 @@ namespace ReduceUI
             foreach (KeyCode k in this.tapeKey.Value.Modifiers)
             {
                 if (!Input.GetKey(k))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -104,22 +184,22 @@ namespace ReduceUI
         {
             if (Input.GetKeyDown(this.tapeKey.Value.MainKey) && OtherKeys())
             {
-                if (this.elems[E.TapeCounter][0] is Behaviour counter)
+                if (this.elems[Elem.TapeCounter][0] is Behaviour counter)
                 {
                     counter.enabled = true;
                 }
-                if (this.elems[E.TapeQueue][0] is Behaviour queue)
+                if (this.elems[Elem.TapeQueue][0] is Behaviour queue)
                 {
                     queue.enabled = true;
                 }
             }
             else if (Input.GetKeyUp(this.tapeKey.Value.MainKey))
             {
-                if (!this.show[E.TapeCounter].Value && this.elems[E.TapeCounter][0] is Behaviour counter)
+                if (!this.show[Elem.TapeCounter].Value && this.elems[Elem.TapeCounter][0] is Behaviour counter)
                 {
                     counter.enabled = false;
                 }
-                if (!this.show[E.TapeQueue].Value && this.elems[E.TapeQueue][0] is Behaviour queue)
+                if (!this.show[Elem.TapeQueue].Value && this.elems[Elem.TapeQueue][0] is Behaviour queue)
                 {
                     queue.enabled = false;
                 }
@@ -128,15 +208,15 @@ namespace ReduceUI
 
         private void Apply()
         {
-            for (int e = 0; e < (int)E.Count; e++)
+            for (int e = 0; e < (int)Elem.Count; e++)
             {
-                foreach (Behaviour b in this.elems[(E)e])
+                foreach (Behaviour b in this.elems[(Elem)e])
                 {
-                    b.enabled = this.show[(E)e].Value;
+                    b.enabled = this.show[(Elem)e].Value;
                 }
             }
 
-            this.tutorial.SetActive(this.show[E.Tut].Value);
+            this.tutorial.SetActive(this.show[Elem.GunHelp].Value);
         }
 
         private bool Init()
@@ -150,131 +230,187 @@ namespace ReduceUI
             }
 
             if (this.elems is null)
-                this.elems = new Dictionary<E, List<Behaviour>>((int)E.Count);
+            {
+                this.elems = new Dictionary<Elem, List<Behaviour>>((int)Elem.Count);
+            }
 
-            if (!this.elems.ContainsKey(E.InvFrame))
-                this.elems[E.InvFrame] = new List<Behaviour>(8);
+            if (!this.elems.ContainsKey(Elem.InventoryFrame))
+            {
+                this.elems[Elem.InventoryFrame] = new List<Behaviour>(8);
+            }
             else
-                this.elems[E.InvFrame].Clear();
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 1").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
-            this.elems[E.InvFrame].Add(gui.Find("Inventory/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
+            {
+                this.elems[Elem.InventoryFrame].Clear();
+            }
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 1").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
+            this.elems[Elem.InventoryFrame].Add(gui.Find("Inventory/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.InvNums))
-                this.elems[E.InvNums] = new List<Behaviour>(5);
+            if (!this.elems.ContainsKey(Elem.InventoryNumbers))
+            {
+                this.elems[Elem.InventoryNumbers] = new List<Behaviour>(5);
+            }
             else
-                this.elems[E.InvNums].Clear();
+            {
+                this.elems[Elem.InventoryNumbers].Clear();
+            }
             TextMeshProUGUI num1 = gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 1/Number").GetComponent<TextMeshProUGUI>();
 
-            this.elems[E.InvNums].Add(num1);
-            this.elems[E.InvNums].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2/Number").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvNums].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3/Number").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvNums].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4/Number").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvNums].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5/Number").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryNumbers].Add(num1);
+            this.elems[Elem.InventoryNumbers].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2/Number").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryNumbers].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3/Number").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryNumbers].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4/Number").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryNumbers].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5/Number").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.InvEmpty))
-                this.elems[E.InvEmpty] = new List<Behaviour>(5);
+            if (!this.elems.ContainsKey(Elem.InventoryEmpty))
+            {
+                this.elems[Elem.InventoryEmpty] = new List<Behaviour>(5);
+            }
             else
-                this.elems[E.InvEmpty].Clear();
-            this.elems[E.InvEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 1/Empty").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2/Empty").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3/Empty").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4/Empty").GetComponent<TextMeshProUGUI>());
-            this.elems[E.InvEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5/Empty").GetComponent<TextMeshProUGUI>());
+            {
+                this.elems[Elem.InventoryEmpty].Clear();
+            }
+            this.elems[Elem.InventoryEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 1/Empty").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 2/Empty").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 3/Empty").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 4/Empty").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.InventoryEmpty].Add(gui.Find("Inventory/Inventory Slots/GUI Inventory Slot 5/Empty").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.Rank))
-                this.elems[E.Rank] = new List<Behaviour>(5);
+            if (!this.elems.ContainsKey(Elem.Rank))
+            {
+                this.elems[Elem.Rank] = new List<Behaviour>(5);
+            }
             else
-                this.elems[E.Rank].Clear();
-            this.elems[E.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Beginner").GetComponent<Image>());
-            this.elems[E.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleeper").GetComponent<Image>());
-            this.elems[E.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleepwalker").GetComponent<Image>());
-            this.elems[E.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Liminal").GetComponent<Image>());
-            this.elems[E.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Awake").GetComponent<Image>());
+            {
+                this.elems[Elem.Rank].Clear();
+            }
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Beginner").GetComponent<Image>());
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleeper").GetComponent<Image>());
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Sleepwalker").GetComponent<Image>());
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Liminal").GetComponent<Image>());
+            this.elems[Elem.Rank].Add(gui.Find("Bottom Right Layout Group/Rank/Awake").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.Holster))
-                this.elems[E.Holster] = new List<Behaviour>(8);
+            if (!this.elems.ContainsKey(Elem.Holster))
+            {
+                this.elems[Elem.Holster] = new List<Behaviour>(8);
+            }
             else
-                this.elems[E.Holster].Clear();
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Line Bottom Left Vertical").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Line Bottom Line left").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom Left Cross").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom").GetComponent<Image>());
-            this.elems[E.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom Right Cross").GetComponent<Image>());
+            {
+                this.elems[Elem.Holster].Clear();
+            }
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Line Bottom Left Vertical").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Line Bottom Line left").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom Left Cross").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom").GetComponent<Image>());
+            this.elems[Elem.Holster].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Left layout Group/GUI Line/Line Bottom Right Cross").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.TapeFrame))
-                this.elems[E.TapeFrame] = new List<Behaviour>(9);
+            if (!this.elems.ContainsKey(Elem.TapeFrame))
+            {
+                this.elems[Elem.TapeFrame] = new List<Behaviour>(9);
+            }
             else
-                this.elems[E.TapeFrame].Clear();
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Line Bottom Left Vertical").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Line Bottom Line left").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line (1)/Line Bottom").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom Left Cross").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom").GetComponent<Image>());
-            this.elems[E.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom Right Cross").GetComponent<Image>());
+            {
+                this.elems[Elem.TapeFrame].Clear();
+            }
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Line Bottom Left Vertical").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Line Bottom Line left").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Text").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Layout Group/Line Bottom Line Right").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line Text/Line Bottom Right Cross").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line (1)/Line Bottom").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom Left Cross").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom").GetComponent<Image>());
+            this.elems[Elem.TapeFrame].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Line/Line Bottom Right Cross").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.TapeIcon))
-                this.elems[E.TapeIcon] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.TapeIcon))
+            {
+                this.elems[Elem.TapeIcon] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.TapeIcon].Clear();
-            this.elems[E.TapeIcon].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Tapes/Tape Counter/Tape").GetComponent<Image>());
+            {
+                this.elems[Elem.TapeIcon].Clear();
+            }
+            this.elems[Elem.TapeIcon].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Tapes/Tape Counter/Tape").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.TapeCounter))
-                this.elems[E.TapeCounter] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.TapeCounter))
+            {
+                this.elems[Elem.TapeCounter] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.TapeCounter].Clear();
-            this.elems[E.TapeCounter].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Tapes/Tape Counter/Global Counter").GetComponent<TextMeshProUGUI>());
+            {
+                this.elems[Elem.TapeCounter].Clear();
+            }
+            this.elems[Elem.TapeCounter].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/GUI Tapes/Tape Counter/Global Counter").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.TapeQueue))
-                this.elems[E.TapeQueue] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.TapeQueue))
+            {
+                this.elems[Elem.TapeQueue] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.TapeQueue].Clear();
-            this.elems[E.TapeQueue].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/Queued Tape Counter").GetComponent<TextMeshProUGUI>());
+            {
+                this.elems[Elem.TapeQueue].Clear();
+            }
+            this.elems[Elem.TapeQueue].Add(gui.Find("Bottom Right Layout Group/Bottom Bottom Right Layout Group/Bottom Bottom Right Right Layout Group/Queued Tape Counter").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.SubFrame))
-                this.elems[E.SubFrame] = new List<Behaviour>(8);
+            if (!this.elems.ContainsKey(Elem.SubtitleFrame))
+            {
+                this.elems[Elem.SubtitleFrame] = new List<Behaviour>(8);
+            }
             else
-                this.elems[E.SubFrame].Clear();
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Top line/Line Bottom Left Vertical").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Line Bottom Line left").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Text").GetComponent<TextMeshProUGUI>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Line Bottom Line Right").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Top line/Line Bottom Right Cross").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom Left Cross").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom").GetComponent<Image>());
-            this.elems[E.SubFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom Right Cross").GetComponent<Image>());
+            {
+                this.elems[Elem.SubtitleFrame].Clear();
+            }
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Top line/Line Bottom Left Vertical").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Line Bottom Line left").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Text").GetComponent<TextMeshProUGUI>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Top line/Layout Group/Line Bottom Line Right").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Top line/Line Bottom Right Cross").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom Left Cross").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom").GetComponent<Image>());
+            this.elems[Elem.SubtitleFrame].Add(gui.Find("subtitle_region/Bottom Line/Line Bottom Right Cross").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.SubWaveform))
-                this.elems[E.SubWaveform] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.SubtitleWaveform))
+            {
+                this.elems[Elem.SubtitleWaveform] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.SubWaveform].Clear();
-            this.elems[E.SubWaveform].Add(gui.Find("subtitle_region/Waveform Visualization Container").GetComponent<Image>());
+            {
+                this.elems[Elem.SubtitleWaveform].Clear();
+            }
+            this.elems[Elem.SubtitleWaveform].Add(gui.Find("subtitle_region/Waveform Visualization Container").GetComponent<Image>());
 
-            if (!this.elems.ContainsKey(E.Msg))
-                this.elems[E.Msg] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.PopupMessages))
+            {
+                this.elems[Elem.PopupMessages] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.Msg].Clear();
-            this.elems[E.Msg].Add(gui.Find("Event Message Text").GetComponent<TextMeshProUGUI>());
+            {
+                this.elems[Elem.PopupMessages].Clear();
+            }
+            this.elems[Elem.PopupMessages].Add(gui.Find("Event Message Text").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.H2H))
-                this.elems[E.H2H] = new List<Behaviour>(1);
+            if (!this.elems.ContainsKey(Elem.PopupHelp))
+            {
+                this.elems[Elem.PopupHelp] = new List<Behaviour>(1);
+            }
             else
-                this.elems[E.H2H].Clear();
-            this.elems[E.H2H].Add(gui.Find("in_world_tutorial_text").GetComponent<TextMeshProUGUI>());
+            {
+                this.elems[Elem.PopupHelp].Clear();
+            }
+            this.elems[Elem.PopupHelp].Add(gui.Find("in_world_tutorial_text").GetComponent<TextMeshProUGUI>());
 
-            if (!this.elems.ContainsKey(E.Tut))
-                this.elems[E.Tut] = new List<Behaviour>(0);
+            if (!this.elems.ContainsKey(Elem.GunHelp))
+            {
+                this.elems[Elem.GunHelp] = new List<Behaviour>(0);
+            }
             this.tutorial = gui.Find("tutorial_text_container").gameObject;
 
             return true;
@@ -285,7 +421,9 @@ namespace ReduceUI
         public static void Attach()
         {
             if (instance.Init())
+            {
                 instance.Apply();
+            }
         }
     }
 }
