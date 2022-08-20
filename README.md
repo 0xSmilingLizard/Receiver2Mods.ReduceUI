@@ -16,4 +16,4 @@ It is recommended to use [BepInEx's Config Manager](https://github.com/BepInEx/B
 
 ## Dependencies (for developers)
 
-The source code depends on `BepInEx.dll`, `UnityEngine.dll`, `UnityEngine.CoreModule.dll`, `UnityEngine.InputLegacyModule.dll`, `0Harmony.dll`, `UnityEngine.UI`, and `Wolfire.Receiver2.dll`. It is set up to expect these DLLs to be located in the parent folder of the repository root folder. All of these DLLs can be found as part of either Receiver 2's or BepInEx's install.
+The source code depends on `BepInEx.dll`, `UnityEngine.dll`, `UnityEngine.CoreModule.dll`, `UnityEngine.InputLegacyModule.dll`, `0Harmony.dll`, `UnityEngine.UI`, `Unity.TextMeshPro.dll`, and `Wolfire.Receiver2.dll`. It is set up to expect these DLLs to be located in the parent folder of the repository root folder. All of these DLLs can be found as part of either Receiver 2's or BepInEx's install.
