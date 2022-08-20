@@ -201,7 +201,7 @@ namespace ReduceUI
                 ;
                 if (rank.HasValue && this.elems[Elem.Rank].Count > rank)
                 {
-                    this.elems[Elem.Rank][rank].enabled = showOrHide;
+                    this.elems[Elem.Rank][rank.Value].enabled = showOrHide;
                 }
             }
         }
