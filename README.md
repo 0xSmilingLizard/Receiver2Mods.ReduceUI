@@ -6,6 +6,7 @@ A mod for Receiver 2 that allows you to hide individual UI elements. The list of
 - Tape info (frame, icon, counter, and queue again individually)
 - Subtitle region (frame and/or waveform icon)
 - Various help texts, that (as far as I can tell) have no in-game settings to turn off
+- The G in interaction prompts
 
 ## Install
 

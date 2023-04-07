@@ -15,7 +15,7 @@ using UnityEngine.UI;
 namespace ReduceUI
 {
     [BepInProcess("Receiver2.exe")]
-    [BepInPlugin("SmilingLizard.plugins.ReduceUI", "ReduceUI", "1.0.0")]
+    [BepInPlugin("SmilingLizard.plugins.ReduceUI", "ReduceUI", "2.1.0")]
     public class ReduceUI : BaseUnityPlugin
     {
         private static ReduceUI instance;
@@ -41,6 +41,7 @@ namespace ReduceUI
             GunHelp,
             PopupMessages,
             PopupHelp,
+            InteractKey,
 
             Count
         }
@@ -56,7 +57,8 @@ namespace ReduceUI
                     inv = "Inventory",
                     group = "Bottom Right Group",
                     subs = "Subtitles",
-                    tut = "Tutorials"
+                    tut = "Tutorials",
+                    inter = "Interaction"
                 ;
 
                 this.show = new Dictionary<Elem, ConfigEntry<bool>>
@@ -65,61 +67,61 @@ namespace ReduceUI
                         inv, 
                         "Frame",
                         defaultValue,
-                        "Toggles visibilty of the frame around inventory items in the bottom left."
+                        "Toggles visibility of the frame around inventory items in the bottom left."
                     ),
                     [Elem.InventoryNumbers] = this.Config.Bind(
                         inv, 
                         "Numbers",
                         defaultValue,
-                        "Toggles visibilty of the numbers in the inventory slots."
+                        "Toggles visibility of the numbers in the inventory slots."
                     ),
                     [Elem.InventoryEmpty] = this.Config.Bind(
                         inv, 
                         "Empty Slots",
                         defaultValue,
-                        "Toggles visibilty of the \"Empty\" indicator in empty inventory slots."
+                        "Toggles visibility of the \"Empty\" indicator in empty inventory slots."
                     ),
                     [Elem.Rank] = this.Config.Bind(
                         group, 
                         "Rank Indicator",
                         defaultValue,
-                        "Toggles visibilty of the rank indicator icon."
+                        "Toggles visibility of the rank indicator icon."
                     ),
                     [Elem.Holster] = this.Config.Bind(
                         group, 
                         "Holster Frame",
                         defaultValue,
-                        "Toggles visibilty of the frame around the holster slot."
+                        "Toggles visibility of the frame around the holster slot."
                     ),
                     [Elem.TapeFrame] = this.Config.Bind(
                         group, 
                         "Tape Frame",
                         defaultValue,
-                        "Toggles visibilty of the frame around the tape UI group."
+                        "Toggles visibility of the frame around the tape UI group."
                     ),
                     [Elem.TapeIcon] = this.Config.Bind(
                         group, 
-                        "Tape icon",
+                        "Tape Icon",
                         defaultValue,
-                        "Toggles visibilty of the tape icon in the tape UI group."
+                        "Toggles visibility of the tape icon in the tape UI group."
                     ),
                     [Elem.TapeCounter] = this.Config.Bind(
                         group, 
                         "Tape Counter",
                         defaultValue,
-                        "Toggles visibilty of the tape counter."
+                        "Toggles visibility of the tape counter."
                     ),
                     [Elem.TapeQueue] = this.Config.Bind(
                         group, 
                         "Tape Queue",
                         defaultValue,
-                        "Toggles visibilty of the number of queued tapes."
+                        "Toggles visibility of the number of queued tapes."
                     ),
                     [Elem.SubtitleFrame] = this.Config.Bind(
                         subs, 
                         "Frame",
                         defaultValue,
-                        "Toggles visibilty of the frame around subtitles."
+                        "Toggles visibility of the frame around subtitles."
                     ),
                     [Elem.SubtitleWaveform] = this.Config.Bind(
                         subs, 
@@ -144,6 +146,12 @@ namespace ReduceUI
                         "In World Help",
                         defaultValue,
                         "Toggles visibility of in-world help messages, like \'Holster your gun to hack\'."
+                    ),
+                    [Elem.InteractKey] = this.Config.Bind(
+                        inter,
+                        "Interact Key",
+                        defaultValue,
+                        "Toggles visibility of the \"G\" in interaction and hacking prompts. May not apply immediately."
                     )
                 };
 
@@ -221,11 +229,17 @@ namespace ReduceUI
 
         private bool Init()
         {
-            Transform gui = GameObject.Find("/ReceiverCore/PlayerGUI/Canvas/gameplay").transform;
-
-            if (gui is null)
+            GameObject guiObj = GameObject.Find("/ReceiverCore/PlayerGUI/Canvas/gameplay");
+            if (guiObj is null)
             {
                 this.Logger.LogError("Tried to init but couldn't find gui; aborting");
+                return false;
+            }
+            Transform gui = guiObj.transform;
+
+            if (!LocalAimHandler.TryGetInstance(out LocalAimHandler lah))
+            {
+                this.Logger.LogError("Tried to init but couldn't find player; aborting");
                 return false;
             }
 
@@ -413,11 +427,22 @@ namespace ReduceUI
             }
             this.tutorial = gui.Find("tutorial_text_container").gameObject;
 
+            if (!this.elems.ContainsKey(Elem.InteractKey))
+            {
+                this.elems[Elem.InteractKey] = new List<Behaviour>(2);
+            }
+            else
+            {
+                this.elems[Elem.InteractKey].Clear();
+            }
+            this.elems[Elem.InteractKey].Add(lah.get_help_text);
+            this.elems[Elem.InteractKey].Add(lah.hacking_minigame.text);
+
             return true;
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(ReceiverCoreScript), "OnLoadedLevel")]
+        [HarmonyPatch(typeof(ReceiverCoreScript), "SpawnPlayer")]
         public static void Attach()
         {
             if (instance.Init())
